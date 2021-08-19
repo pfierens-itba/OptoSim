@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 #Speed of light
 c = 299792458*1e9/1e12 # nm/ps    
 #Planck constant
-h = 6.62607015e-34*1e12 #J*ps
+h = 6.62607015e-34*1e24 #W*ps*ps
 hbar = h/(2.0*np.pi)
 
 ###################################

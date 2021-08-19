@@ -13,11 +13,11 @@ class GNLSE(SingleModePE):
     
     def __init__(self,
                  lambda0=1550,N=2**13,Tmax=10,
-                 betas=[-20],alpha=0.0,gammas=[0.1],satgamma=0.0,
+                 betas=[-20],alpha=0.0,gammas=[0.1],satgamma=3e6,
                  fR=0.18,tau1=0.0122,tau2=0.032):
         
         #Type of equation
-        self.type = "NLSE"
+        self.type = "GNLSE"
         
         #Common definitions for all cases
         self._initcommon(lambda0,N,Tmax)

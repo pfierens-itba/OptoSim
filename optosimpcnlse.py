@@ -14,7 +14,7 @@ class pcGNLSE(SingleModePE):
     
     def __init__(self,
                  lambda0=1550,N=2**13,Tmax=10,
-                 betas=[-20],alpha=0.0,gammas=[0.1],satgamma=0.0,
+                 betas=[-20],alpha=0.0,gammas=[0.1],satgamma=3e6,
                  fR=0.18,tau1=0.0122,tau2=0.032):
         
         #Type of equation
@@ -31,7 +31,7 @@ class pcGNLSE(SingleModePE):
     def gammaw(self,gammas=[0.1],satgamma=3e6):
         g = 0
         for i in range(len(gammas)):        # Taylor de beta(Omega)
-            g = g + gammas[i]/factorial(i+2) * self.W**i
+            g = g + gammas[i]/factorial(i) * self.W**i
         g[g>+satgamma] = +satgamma
         g[g<-satgamma] = -satgamma
         self.r        = ((g+1j*0)/(self.W+self.omega0))**(1/4)

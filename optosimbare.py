@@ -40,7 +40,7 @@ class SingleModePE():
     def gammaw(self,gammas=[0.1],satgamma=3e6):
         g = 0
         for i in range(len(gammas)):        # Taylor de beta(Omega)
-            g = g + gammas[i]/factorial(i+2) * self.W**i
+            g = g + gammas[i]/factorial(i) * self.W**i
         g[g>+satgamma] = +satgamma
         g[g<-satgamma] = -satgamma
 
@@ -85,8 +85,8 @@ class SingleModePE():
         
         #Details of the integration method
         self.method = 'RK45'
-        self.rtol = 1e-5
-        self.atol = 1e-7
+        self.rtol = 1e-3
+        self.atol = 1e-6
     
     #La convención es que con  _ es una función o variable "privada"
     def _RHS(self,z,A):
