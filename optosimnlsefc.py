@@ -36,18 +36,16 @@ class GNLSEFC(GNLSE):
 
         #Dispersion
         self.linop(betas,alpha)
-      
-        #Free carriers
-        self.nlinearfc  = nlinearfc
-        self.sigmafc    = -sigmafca/2-1j*sigmafcr/2
-        self.taufc      = taufc
-        self.intconst1  = 1-self.dT/self.taufc
-        self.intconst2  = self.nlinearfc*self.dT
-        
+ 
         #TPA
-        self.Gamma = self.Gamma+self.gammaTPA(gammastpa,satgammatpa)
-
-
+        self.GammaTPA = self.gammaTPA(gammastpa,satgammatpa)
+        self.updategamma()
+        
+ 
+        #Free carriers
+        self.freecarriers(nlinearfc,sigmafca,sigmafcr,taufc)
+        
+        
     def gammaTPA(self,gammas=[0.1],satgamma=3e6):
         g = 0
         for i in range(len(gammas)):        # Taylor de beta(Omega)
@@ -57,13 +55,20 @@ class GNLSEFC(GNLSE):
 
         return 1j*g        
 
+    def updategamma(self):
+        self.Gamma = self.Gamma+self.GammaTPA
+
+    def freecarriers(self,nlinearfc,sigmafca,sigmafcr,taufc):
+        self.nlinearfc  = nlinearfc
+        self.sigmafc    = -sigmafca/2-1j*sigmafcr/2
+        self.taufc      = taufc
+        self.greenfc    = self.nlinearfc/(1/self.taufc-1j*self.W)
+
+
     def NonlinearOp(self,z,A):
         AT = iFFT(A)
-        AT2= AT*np.conj(AT)
-        P2 = AT2**2
-        NT = np.zeros_like(P2)
-        for k in range(1,self.N):
-            NT[k] = NT[k-1]*self.intconst1+P2[k-1]*self.intconst2
+        AT2= AT*np.conj(AT)       
+        NT = np.real(iFFT(FFT(AT2**2)*self.greenfc))
 
         dA = 1j * self.Gamma * FFT(AT * iFFT( self.RW * FFT(AT2) ) )
         dA = dA + FFT(self.sigmafc*NT*AT)
