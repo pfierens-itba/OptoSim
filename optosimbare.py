@@ -8,23 +8,25 @@ import numpy as np
 from math import factorial
 from tqdm import tqdm
 from scipy.integrate import solve_ivp
-from optocommon import FFT, iFFT, FFTSHIFT, c
+from optocommon import FFT, iFFT, FFTSHIFT, PhysConst
 
 class SingleModePE():
     
     def __init__(self,
                  lambda0=1550,N=2**13,Tmax=10,
-                 betas=[-20],alpha=0.0,gammas=[0.1],satgamma=0.0):
+                 betas=[-20],alpha=0.0,gammas=[0.1],satgamma=0.0,
+                 cnst=PhysConst()):
         
         #Type of equation
         self.type = "NLSE"
-        
+
         #Common definitions for all cases
-        self._initcommon(lambda0,N,Tmax)
+        self._initcommon(lambda0,N,Tmax,cnst)
 
         #Definitions specific to this equation
         self.linop(betas,alpha)
         self.gammaw(gammas,satgamma)
+        
                             
     def linop(self,betas=[-20],alpha=0):
         """Operador lineal para una fibra óptica.
@@ -55,10 +57,13 @@ class SingleModePE():
     #########################################################
     
     #COMMON DEFINITIONS FOR ALL CASES
-    def _initcommon(self,lambda0=1550,N=2**13,Tmax=10):
+    def _initcommon(self,lambda0,N,Tmax,cnst):
+        #Physical constants
+        self.cnst = cnst
+        
         #WAVELENGTH [nm]
         self.lambda0 = np.abs(float(lambda0))
-        self.omega0 = 2.0*np.pi*c/lambda0
+        self.omega0 = 2.0*np.pi*self.cnst.cwave/lambda0
         
         #NUMBER OF POINTS
         #We use a power of 2

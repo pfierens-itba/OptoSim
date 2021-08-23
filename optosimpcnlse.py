@@ -6,7 +6,7 @@ Created on Mon Aug  9 12:02:27 2021
 """
 import numpy as np
 from math import factorial
-from optocommon import FFT, iFFT, FFTSHIFT
+from optocommon import FFT, iFFT, FFTSHIFT, PhysConst
 from optosimbare import SingleModePE
 
 #pcGNLSE
@@ -15,13 +15,14 @@ class pcGNLSE(SingleModePE):
     def __init__(self,
                  lambda0=1550,N=2**13,Tmax=10,
                  betas=[-20],alpha=0.0,gammas=[0.1],satgamma=3e6,
-                 fR=0.18,tau1=0.0122,tau2=0.032):
+                 fR=0.18,tau1=0.0122,tau2=0.032,
+                 cnst=PhysConst()):
         
         #Type of equation
         self.type = "NLSE"
         
         #Common definitions for all cases
-        self._initcommon(lambda0,N,Tmax)
+        self._initcommon(lambda0,N,Tmax,cnst)
 
         #Definitions specific to this equation
         self.linop(betas,alpha)

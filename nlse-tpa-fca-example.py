@@ -6,14 +6,15 @@ Created on Wed Aug 18 13:15:52 2021
 """
 import numpy as np
 import matplotlib.pylab as plt
-from optocommon import FFT, iFFT, FFTSHIFT, gaussianPulse, c, hbar, plotevol, dB
+from optocommon import FFT, FFTSHIFT, gaussianPulse, PhysConst
 from optosimnlsefc import GNLSEFC
-from optosimpcnlse import pcGNLSE
 
 #####################################################################
-# Example: Figures 3 and 4 of Yin & Agrawal, 
-#          Optics Letters 32(14), 2007.
+# Example: Figure 1 of Yin & Agrawal, Optics Letters 32(14), 2007.
 #####################################################################
+
+#Physical Constants
+cnst = PhysConst()
 
 #SAMPLING AND TIME SPAN
 N    = 2**12
@@ -21,7 +22,7 @@ Tmax = 600 # ps
 
 #CENTRAL WAVELENGTH
 lambda0 = 1550                  #nm
-omega0  = 2*(np.pi)*c/lambda0   #Trad/s
+omega0  = 2*(np.pi)*cnst.cwave/lambda0   #Trad/s
 k0      = 2*np.pi/(lambda0*1e-9)   #1/m
 
 #DISPERSION
@@ -52,7 +53,7 @@ sigmaFCA    = 1.45e-21              #m**2
 sigmaFCR    = 2*k0*1.35e-27         #
 
 tauFC       = 1e3       #ps
-nlinearFC   = betaTPA/(2.0*hbar*omega0)
+nlinearFC   = betaTPA/(2.0*cnst.hbar*omega0)
 
 #FIBER LENGTH
 distance = 0.02 # m
@@ -107,7 +108,7 @@ Pw3 = np.abs(fibra3.A)**2
 
 #%% Figure
 
-lambdas = FFTSHIFT(2*np.pi*c/(omega0+fibra1.W))
+lambdas = FFTSHIFT(2*np.pi*cnst.cwave/(omega0+fibra1.W))
 f = plt.figure()
 plt.plot(lambdas,FFTSHIFT(Pw1[:,-1])/lambdas**2,label='No TPA/No FC')
 plt.plot(lambdas,FFTSHIFT(Pw2[:,-1])/lambdas**2,label='TPA Only')

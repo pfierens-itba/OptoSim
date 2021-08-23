@@ -9,21 +9,62 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ###################################
-# CONSTANTES
+# CONSTANTS
 ###################################
 
-#Speed of light
-c = 299792458*1e9/1e12 # nm/ps    
-#Planck constant
-h = 6.62607015e-34*1e24 #W*ps*ps
-hbar = h/(2.0*np.pi)
+class PhysConst():
 
+    def __init__(self,
+                 timemult=1e-12,distancemult=1,chargemult=1,
+                 powermult=1,
+                 wavelengthmult=1e-9):    
+        """
+        Units are implicitly defined by some universal physical constants such
+        as the speed of light (in a vaccum), Plank constant, etc.
+        This object defines these constants by multiplying some units (meters,
+        seconds,Watts,Coulombs) by an adequate constant. 
+        WARNING: two 'distance' units are used, one for distance, surface, 
+        volume, and another for wavelength. The speed of line is affected by 
+        the latter, but not by the former. This is convenient for our 
+        applications.
+        WARNING 2: not all physical constants are defined. Only some which
+        are commonly used.
+        
+        Parameters
+        ----------
+        timemult : desired time unit in seconds
+        distancemult : desired distance unit in meters
+        chargemult : desired charge unit in Coulombs
+        powermult : desired power unit in Watts
+        wavelengthmult : desired wavelength unit in meters
+        """
+        
+    
+        #Speed of light
+        self.cwave  = 299792458*timemult/wavelengthmult   
+        self.c      = 299792458*timemult/distancemult   
+        #Planck constant
+        self.h      = 6.62607015e-34/(powermult*timemult**2)
+        self.hbar   = self.h/(2.0*np.pi)
+        #Electron charge
+        self.e      = 1.6021766208e-19/chargemult
+        #Boltzmann constant
+        self.k      = 1.38064852e-23/(powermult*timemult)
+        #Fine-structure constant
+        self.alpha  = 7.2973525664e-3
+        #Vacuum permitivity
+        self.epsilon= self.e**2/(2*self.alpha*self.h*self.c)
+        #Vacuum permeability
+        self.mu     = 2*self.alpha*self.h/(self.e**2*self.c)
+        
 ###################################
 #FFT
 ###################################
 
 FFT         = lambda X:fft.ifft(X)*len(X)
 iFFT        = lambda X:fft.fft(X)/len(X)
+FFT2D       = lambda X,ax:fft.ifft(X,axis=ax)*X.shape[ax]
+iFFT2D      = lambda X,ax:fft.fft(X,axis=ax)/X.shape[ax]
 FFTSHIFT    = lambda X:fft.fftshift(X)
 FFTSHIFT2D  = lambda X,ax:fft.fftshift(X,axes=ax)    
 

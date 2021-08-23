@@ -6,7 +6,7 @@ Created on Wed Aug 18 13:15:52 2021
 """
 import numpy as np
 import matplotlib.pylab as plt
-from optocommon import FFT, sechPulse, c, plotevol, dB
+from optocommon import FFT, sechPulse, PhysConst, plotevol, dB
 from optosimnlse import GNLSE
 
 #####################################################################
@@ -14,13 +14,16 @@ from optosimnlse import GNLSE
 #          Reviews of Modern Physics 78, 2006.
 #####################################################################
 
+#Physical Constants
+cnst = PhysConst()
+
 #SAMPLING AND TIME SPAN
 N    = 2**13
 Tmax = 6.25 # ps
 
 #CENTRAL WAVELENGTH
 lambda0 = 835
-omega0  = 2*(np.pi)*c/lambda0
+omega0  = 2*(np.pi)*cnst.c/lambda0
 
 #DISPERSION
 #betas in ps^m/m

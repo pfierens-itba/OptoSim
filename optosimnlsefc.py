@@ -5,14 +5,14 @@ Created on Mon Aug  9 12:02:27 2021
 @author: Firulais
 """
 import numpy as np
-from scipy.integrate import simpson
 from math import factorial
-from optocommon import FFT, iFFT, FFTSHIFT
+from optocommon import FFT, iFFT, PhysConst
 from optosimnlse import GNLSE
 
 
-#GNLSE estándar: Raman con un solo pico. Ver Agrawal NLFO Capítulo 2.
-#Includes two-photon absorption and free carriers effects according to
+#GNLSE standard: Raman with a single Lorentzian frequency.
+#See Agrawal NLFO Capítulo 2.
+#It includes two-photon absorption and free carriers effects according to
 #Lin, Painter and Agrawal, Optics Express 15, 2007
 class GNLSEFC(GNLSE):
     
@@ -22,13 +22,14 @@ class GNLSEFC(GNLSE):
                  gammaskerr=[0.1],satgammakerr=3e6,
                  gammastpa=[0.1],satgammatpa=3e6,
                  sigmafca=1.45e-21,sigmafcr=5.3e-27,taufc=3e3,nlinearfc=0,
-                 fR=0.048,tau1=0.01,tau2=3.00):
+                 fR=0.048,tau1=0.01,tau2=3.00,
+                 cnst=PhysConst()):
         
         #Type of equation
         self.type = "NLSE-Free Carriers"
         
         #Common definitions for all cases
-        self._initcommon(lambda0,N,Tmax)
+        self._initcommon(lambda0,N,Tmax,cnst)
 
         #Raman & and Kerr nonlinearity
         self.raman(fR,tau1,tau2)
@@ -63,7 +64,6 @@ class GNLSEFC(GNLSE):
         self.sigmafc    = -sigmafca/2-1j*sigmafcr/2
         self.taufc      = taufc
         self.greenfc    = self.nlinearfc/(1/self.taufc-1j*self.W)
-
 
     def NonlinearOp(self,z,A):
         AT = iFFT(A)
