@@ -5,10 +5,13 @@ Created on Mon Aug  9 13:53:33 2021
 @author: Firulais
 """
 import numpy as np
-from optocommon import FFT, sechPulse, c, plotevol, dB
+from optocommon import FFT, sechPulse, PhysConst, plotevol, dB
 from optosimnlse import GNLSE
 from optosimpcnlse import pcGNLSE
 import matplotlib.pyplot as plt
+
+#Physical Constants
+cnst = PhysConst()
 
 #DATOS DE MUESTREO
 N    = 2**17
@@ -16,11 +19,11 @@ Tmax = 95 # ps
 
 #FRECUENCIA CENTRAL
 lambda0 = 850
-omega0  = 2*(np.pi)*c/lambda0
+omega0  = 2*(np.pi)*cnst.cwave/lambda0
 
 #DISPERSIÓN Y ZDW
 zdw          = 780
-Omegazd      = 2*np.pi*c/zdw-omega0
+Omegazd      = 2*np.pi*cnst.cwave/zdw-omega0
 beta3        = 0.12e-3 #0.55/1.2 # ps^3/m 1/Omegaz#
 beta2        = -beta3*Omegazd
 print(f'beta2: {beta2*1e3: .5f} ps^2/km')
@@ -32,7 +35,7 @@ print(f'WZD: {Omegazd:.3f} Trad/s')
 gamma0   = 0.018353
 satgamma = 3e6
 znw      = 860
-Omegaz   = 2*np.pi*c/znw-omega0
+Omegaz   = 2*np.pi*cnst.cwave/znw-omega0
 gamma1   = -gamma0/Omegaz
 
 #SOLITÓN
