@@ -18,11 +18,11 @@ class GNLSEFC(GNLSE):
     
     def __init__(self,
                  lambda0=1550,N=2**13,Tmax=10,
-                 betas=[-20],alpha=0.0,
+                 betas=[-20],alphas=[0.0],
                  gammaskerr=[0.1],satgammakerr=3e6,
                  gammastpa=[0.1],satgammatpa=3e6,
                  sigmafca=1.45e-21,sigmafcr=5.3e-27,taufc=3e3,nlinearfc=0,
-                 fR=0.048,tau1=0.01,tau2=3.00,
+                 fR=0.048,tau1=0.01,tau2=3.00,ramanw=[],
                  cnst=PhysConst()):
         
         #Type of equation
@@ -32,11 +32,11 @@ class GNLSEFC(GNLSE):
         self._initcommon(lambda0,N,Tmax,cnst)
 
         #Raman & and Kerr nonlinearity
-        self.raman(fR,tau1,tau2)
+        self.raman(fR,tau1,tau2,ramanw)
         self.gammaw(gammaskerr,satgammakerr)
 
         #Dispersion
-        self.linop(betas,alpha)
+        self.linop(betas,alphas)
  
         #TPA
         self.GammaTPA = self.gammaTPA(gammastpa,satgammatpa)
@@ -48,11 +48,16 @@ class GNLSEFC(GNLSE):
         
         
     def gammaTPA(self,gammas=[0.1],satgamma=3e6):
-        g = 0
-        for i in range(len(gammas)):        # Taylor de beta(Omega)
-            g = g + gammas[i]/factorial(i) * self.W**i
-        g[g>+satgamma] = +satgamma
-        g[g<-satgamma] = -satgamma
+        #If there are as many values of gammas as N, it assumes that it provides
+        #the values as a function of W (already FFTSHIFTED)
+        if len(gammas) == self.N:
+            g = gammas
+        else:
+            g = 0
+            for i in range(len(gammas)):        # Taylor de beta(Omega)
+                g = g + gammas[i]/factorial(i) * self.W**i
+            g[g>+satgamma] = +satgamma
+            g[g<-satgamma] = -satgamma
 
         return 1j*g        
 

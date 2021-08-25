@@ -69,7 +69,7 @@ P0      = 1.2e9/1e-4        #W/m2
 
 #Neither TPA nor FCA/FCR
 fibra1  = GNLSEFC(lambda0=lambda0,N=N,Tmax=Tmax,
-                 betas=betas,alpha=alpha,
+                 betas=betas,alphas=[alpha],
                  gammaskerr=[gammaKerr0],satgammakerr=satgammaKerr,
                  gammastpa=[0],satgammatpa=satgammaTPA,
                  sigmafca=0,sigmafcr=0,taufc=tauFC,nlinearfc=nlinearFC,
@@ -77,7 +77,7 @@ fibra1  = GNLSEFC(lambda0=lambda0,N=N,Tmax=Tmax,
 
 #Only TPA
 fibra2  = GNLSEFC(lambda0=lambda0,N=N,Tmax=Tmax,
-                 betas=betas,alpha=alpha,
+                 betas=betas,alphas=[alpha],
                  gammaskerr=[gammaKerr0],satgammakerr=satgammaKerr,
                  gammastpa=[gammaTPA0],satgammatpa=satgammaTPA,
                  sigmafca=0,sigmafcr=0,taufc=tauFC,nlinearfc=nlinearFC,
@@ -85,7 +85,7 @@ fibra2  = GNLSEFC(lambda0=lambda0,N=N,Tmax=Tmax,
 
 #Full
 fibra3  = GNLSEFC(lambda0=lambda0,N=N,Tmax=Tmax,
-                 betas=betas,alpha=alpha,
+                 betas=betas,alphas=[alpha],
                  gammaskerr=[gammaKerr0],satgammakerr=satgammaKerr,
                  gammastpa=[gammaTPA0],satgammatpa=satgammaTPA,
                  sigmafca=sigmaFCA,sigmafcr=sigmaFCR,taufc=tauFC,nlinearfc=nlinearFC,

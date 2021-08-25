@@ -14,7 +14,7 @@ class SingleModePE():
     
     def __init__(self,
                  lambda0=1550,N=2**13,Tmax=10,
-                 betas=[-20],alpha=0.0,gammas=[0.1],satgamma=0.0,
+                 betas=[-20],alphas=[0.0],gammas=[0.1],satgamma=0.0,
                  cnst=PhysConst()):
         
         #Type of equation
@@ -24,27 +24,48 @@ class SingleModePE():
         self._initcommon(lambda0,N,Tmax,cnst)
 
         #Definitions specific to this equation
-        self.linop(betas,alpha)
+        self.linop(betas,alphas)
         self.gammaw(gammas,satgamma)
         
                             
-    def linop(self,betas=[-20],alpha=0):
+    def linop(self,betas=[-20],alphas=[0]):
         """Operador lineal para una fibra óptica.
         Parametros:
         betas: lista o vector de valores de los coeficientes del desarrollo en serie de la dispersion a partir
                de beta_2 (GVD)
         alpha: atenuación (por defecto, nula)."""
-        B = 0
-        for i in range(len(betas)):        # Taylor de beta(Omega)
-            B = B + betas[i]/factorial(i+2) * self.W**(i+2)
-        self.LinOP = -1j*B + alpha
+        
+        #If there are as many values of betas as N, it assumes that it provides
+        #the values as a function of W (already FFTSHIFTED)
+        if len(betas) == self.N:
+            B = betas
+        else:
+            B = 0
+            for i in range(len(betas)):        # Taylor de beta(Omega)
+                B = B + betas[i]/factorial(i+2) * self.W**(i+2)
+        #If there are as many values of alpha as N, it assumes that it provides
+        #the values as a function of W (already FFTSHIFTED)
+        if len(alphas) == self.N:
+            A = alphas
+        else:
+            A = 0
+            for i in range(len(alphas)):        # Taylor de beta(Omega)
+                A = A + alphas[i]/factorial(i) * self.W**(i)
+                
+        self.LinOP = -1j*B + A
 
     def gammaw(self,gammas=[0.1],satgamma=3e6):
-        g = 0
-        for i in range(len(gammas)):        # Taylor de beta(Omega)
-            g = g + gammas[i]/factorial(i) * self.W**i
-        g[g>+satgamma] = +satgamma
-        g[g<-satgamma] = -satgamma
+
+        #If there are as many values of gammas as N, it assumes that it provides
+        #the values as a function of W (already FFTSHIFTED)
+        if len(gammas) == self.N:
+            g = gammas
+        else:
+            g = 0
+            for i in range(len(gammas)):        # Taylor de beta(Omega)
+                g = g + gammas[i]/factorial(i) * self.W**i
+            g[g>+satgamma] = +satgamma
+            g[g<-satgamma] = -satgamma
 
         self.Gamma = g
       
