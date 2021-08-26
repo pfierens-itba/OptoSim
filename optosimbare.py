@@ -52,7 +52,7 @@ class SingleModePE():
             for i in range(len(alphas)):        # Taylor de beta(Omega)
                 A = A + alphas[i]/factorial(i) * self.W**(i)
                 
-        self.LinOP = -1j*B + A
+        self.LinOP = -1j*B + A/2.0
 
     def gammaw(self,gammas=[0.1],satgamma=3e6):
 
